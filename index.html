@@ -3,29 +3,32 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Дневник">
-  <title>Дневник мочеиспускания</title>
+  <meta name="theme-color" content="#1a1a1a">
+  <title>Дневник</title>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 16px;
-      padding-bottom: 100px;
-      background: #fafafa;
+      padding-top: calc(env(safe-area-inset-top) + 16px);
+      padding-bottom: 200px;
+      background: #1a1a1a;
+      color: #e0e0e0;
       min-height: 100vh;
     }
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
-    h1 { margin: 0; font-size: 24px; font-weight: 600; }
-    .header-buttons { display: flex; gap: 8px; }
+    h1 { margin: 0; font-size: 22px; font-weight: 600; color: #fff; }
+    .header-buttons { display: flex; gap: 4px; }
     .icon-btn {
       background: none;
       border: none;
@@ -33,91 +36,126 @@
       cursor: pointer;
       padding: 8px;
     }
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #252525;
+      border-radius: 10px;
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .stat-drink .stat-value { color: #81c784; }
+    .stat-pee .stat-value { color: #ffb74d; }
     .export-box {
-      background: #fff;
+      background: #252525;
       border-radius: 12px;
       padding: 12px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       display: none;
     }
     .export-box.show { display: block; }
     .export-text {
       width: 100%;
       height: 150px;
-      border: 1px solid #ddd;
+      border: 1px solid #333;
       border-radius: 8px;
       padding: 8px;
       font-family: monospace;
       font-size: 12px;
       resize: none;
+      background: #1a1a1a;
+      color: #e0e0e0;
     }
     .hint {
       margin: 8px 0 0;
       font-size: 12px;
-      color: #888;
+      color: #666;
       text-align: center;
+    }
+    .bottom-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #252525;
+      padding: 12px 16px;
+      padding-bottom: calc(env(safe-area-inset-bottom) + 12px);
+      border-top: 1px solid #333;
     }
     .input-section {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       width: 100%;
     }
     .input {
       flex: 1;
       min-width: 0;
-      padding: 14px 12px;
+      padding: 12px;
       font-size: 16px;
-      border: 1px solid #ddd;
+      border: 1px solid #444;
       border-radius: 10px;
-      background: #fff;
+      background: #1a1a1a;
+      color: #e0e0e0;
       outline: none;
     }
+    .input::placeholder { color: #666; }
     .input-vol { flex: 0 0 70px; }
     .input-note { flex: 1; }
     .buttons {
       display: flex;
       gap: 8px;
-      margin-bottom: 20px;
     }
     .btn {
       flex: 1;
-      padding: 14px 8px;
-      font-size: 14px;
+      padding: 12px 8px;
+      font-size: 13px;
       font-weight: 600;
       color: #fff;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
     .btn-drink { background: #4caf50; }
     .btn-pee { background: #ff9800; }
-    .btn-urge { background: #ffc107; }
+    .btn-urge { background: #f9a825; }
     .list { display: flex; flex-direction: column; gap: 6px; }
     .date-header {
       font-size: 13px;
       font-weight: 600;
-      color: #666;
+      color: #888;
       padding: 12px 4px 6px;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #333;
       margin-bottom: 6px;
     }
     .entry {
       display: flex;
       align-items: center;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 10px;
       gap: 10px;
     }
-    .entry-drink { background: #e8f5e9; }
-    .entry-pee { background: #fff3e0; }
-    .entry-urge { background: #fff8e1; }
+    .entry-drink { background: #1b3d1b; }
+    .entry-pee { background: #3d2e1b; }
+    .entry-urge { background: #3d3a1b; }
     .entry-time {
       font-size: 14px;
       font-weight: 500;
-      color: #555;
+      color: #999;
       min-width: 45px;
     }
     .entry-content {
@@ -128,19 +166,19 @@
       align-items: center;
     }
     .entry-type { font-size: 14px; }
-    .entry-vol { font-size: 14px; font-weight: 600; color: #333; }
-    .entry-note { font-size: 13px; color: #666; }
+    .entry-vol { font-size: 14px; font-weight: 600; color: #fff; }
+    .entry-note { font-size: 13px; color: #888; }
     .delete-btn {
       background: none;
       border: none;
       font-size: 20px;
-      color: #999;
+      color: #555;
       cursor: pointer;
       padding: 4px 8px;
     }
     .empty {
       text-align: center;
-      color: #999;
+      color: #555;
       padding: 40px;
     }
   </style>
@@ -154,26 +192,43 @@
     </div>
   </div>
 
+  <div class="stats" id="stats">
+    <div class="stat stat-drink">
+      <div class="stat-value" id="statDrink">0</div>
+      <div class="stat-label">выпито мл</div>
+    </div>
+    <div class="stat stat-pee">
+      <div class="stat-value" id="statPee">0</div>
+      <div class="stat-label">выделено мл</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="statCount">0</div>
+      <div class="stat-label">походов</div>
+    </div>
+  </div>
+
   <div class="export-box" id="exportBox">
     <textarea class="export-text" id="exportText" readonly onclick="this.select()"></textarea>
     <p class="hint">Нажми, чтобы выделить всё</p>
   </div>
 
-  <div class="input-section">
-    <input type="number" inputmode="numeric" placeholder="мл" id="volumeInput" class="input input-vol">
-    <input type="text" placeholder="примечание" id="noteInput" class="input input-note">
-  </div>
-
-  <div class="buttons">
-    <button class="btn btn-drink" onclick="addEntry('drink')">💧 Выпил</button>
-    <button class="btn btn-pee" onclick="addEntry('pee')">🚽 Помочился</button>
-    <button class="btn btn-urge" onclick="addEntry('urge')">⚡ Позыв</button>
-  </div>
-
   <div class="list" id="list"></div>
+
+  <div class="bottom-panel">
+    <div class="input-section">
+      <input type="number" inputmode="numeric" placeholder="мл" id="volumeInput" class="input input-vol">
+      <input type="text" placeholder="примечание" id="noteInput" class="input input-note">
+    </div>
+    <div class="buttons">
+      <button class="btn btn-drink" onclick="addEntry('drink')">💧 Выпил</button>
+      <button class="btn btn-pee" onclick="addEntry('pee')">🚽 Помочился</button>
+      <button class="btn btn-urge" onclick="addEntry('urge')">⚡ Позыв</button>
+    </div>
+  </div>
 
   <script>
     const STORAGE_KEY = 'voiding-diary';
+    const DAY_START_HOUR = 9;
     let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
     const typeLabels = {
@@ -182,14 +237,48 @@
       urge: '⚡ Позыв'
     };
 
+    function getAdjustedDate(date) {
+      const d = new Date(date);
+      if (d.getHours() < DAY_START_HOUR) {
+        d.setDate(d.getDate() - 1);
+      }
+      return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+    }
+
+    function getCurrentDayDate() {
+      return getAdjustedDate(new Date());
+    }
+
     function save() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function updateStats() {
+      const today = getCurrentDayDate();
+      let drinkTotal = 0;
+      let peeTotal = 0;
+      let peeCount = 0;
+
+      entries.forEach(e => {
+        if (e.date === today) {
+          if (e.type === 'drink' && e.volume) drinkTotal += e.volume;
+          if (e.type === 'pee') {
+            if (e.volume) peeTotal += e.volume;
+            peeCount++;
+          }
+        }
+      });
+
+      document.getElementById('statDrink').textContent = drinkTotal;
+      document.getElementById('statPee').textContent = peeTotal;
+      document.getElementById('statCount').textContent = peeCount;
     }
 
     function render() {
       const list = document.getElementById('list');
       if (entries.length === 0) {
         list.innerHTML = '<p class="empty">Пока пусто</p>';
+        updateStats();
         return;
       }
       
@@ -217,14 +306,16 @@
       });
       
       list.innerHTML = html;
+      updateStats();
     }
 
     function addEntry(type) {
       const now = new Date();
       const entry = {
         id: Date.now(),
-        date: now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }),
+        date: getAdjustedDate(now),
         time: now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: now.toISOString(),
         type,
         volume: document.getElementById('volumeInput').value ? parseInt(document.getElementById('volumeInput').value) : null,
         note: document.getElementById('noteInput').value || null
@@ -275,6 +366,13 @@
         });
       });
       return text.trim();
+    }
+
+    // Handle keyboard
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        document.body.style.paddingBottom = (200 + (window.innerHeight - window.visualViewport.height)) + 'px';
+      });
     }
 
     render();
